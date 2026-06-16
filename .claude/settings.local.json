@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(rm -rf .git)",
+      "Bash(git init:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)"
+    ]
+  }
+}

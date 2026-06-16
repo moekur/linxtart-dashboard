@@ -143,10 +143,12 @@ function formatDate(label: unknown) {
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   async function fetchAll() {
     setLoading(true);
+    setError(null);
     try {
       const [
         totalUsers,
@@ -204,7 +206,9 @@ export default function Dashboard() {
       });
       setLastUpdated(new Date());
     } catch (err) {
-      console.error("Failed to fetch dashboard data:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Failed to fetch dashboard data:", message);
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -225,7 +229,22 @@ export default function Dashboard() {
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red text-lg font-semibold mb-2">Failed to load dashboard</p>
+          {error && <p className="text-muted text-sm mb-4 max-w-md">{error}</p>}
+          <button
+            onClick={fetchAll}
+            className="px-4 py-2 bg-accent/10 text-accent-light rounded-lg hover:bg-accent/20 transition-colors text-sm font-medium"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const pieData = [
     { name: "Players", value: data.userTypes.players },

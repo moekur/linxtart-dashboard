@@ -1,16 +1,16 @@
-import { supabase } from "./supabase";
+import { getSupabase } from "./supabase";
 
 // ---- Totals ----
 
 export async function getTotalUsers() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
 }
 
 export async function getTotalVideos() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("videos")
     .select("*", { count: "exact", head: true })
     .eq("status", "published");
@@ -18,28 +18,28 @@ export async function getTotalVideos() {
 }
 
 export async function getTotalLikes() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("video_likes")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
 }
 
 export async function getTotalComments() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("video_comments")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
 }
 
 export async function getTotalFollows() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("user_follows")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
 }
 
 export async function getTotalOpportunities() {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("opportunities")
     .select("*", { count: "exact", head: true });
   return count ?? 0;
@@ -48,24 +48,24 @@ export async function getTotalOpportunities() {
 // ---- User type breakdown ----
 
 export async function getUserTypeBreakdown() {
-  const { data: players } = await supabase
+  const { data: players } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true })
     .eq("user_type", "Player");
 
-  const { data: coaches } = await supabase
+  const { data: coaches } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true })
     .eq("user_type", "Coach");
 
   // Use count from headers isn't available with head:true in data,
   // so let's do it differently
-  const { count: playerCount } = await supabase
+  const { count: playerCount } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true })
     .eq("user_type", "Player");
 
-  const { count: coachCount } = await supabase
+  const { count: coachCount } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true })
     .eq("user_type", "Coach");
@@ -76,7 +76,7 @@ export async function getUserTypeBreakdown() {
 // ---- Growth over time (users by created_at, grouped by day) ----
 
 export async function getUserGrowth() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("user_profiles")
     .select("created_at")
     .order("created_at", { ascending: true });
@@ -98,7 +98,7 @@ export async function getUserGrowth() {
 // ---- Video uploads over time ----
 
 export async function getVideoGrowth() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("videos")
     .select("created_at")
     .eq("status", "published")
@@ -121,7 +121,7 @@ export async function getVideoGrowth() {
 // ---- Engagement over time (likes per day) ----
 
 export async function getDailyLikes() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("video_likes")
     .select("created_at")
     .order("created_at", { ascending: true });
@@ -141,7 +141,7 @@ export async function getDailyLikes() {
 // ---- Top videos by engagement ----
 
 export async function getTopVideos() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("videos")
     .select("id, caption, views_count, likes_count, comments_count, created_at, user_id")
     .eq("status", "published")
@@ -154,7 +154,7 @@ export async function getTopVideos() {
 // ---- Top users by followers ----
 
 export async function getTopUsers() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("user_profiles")
     .select("username, full_name, followers_count, videos_count, user_type")
     .order("followers_count", { ascending: false })
@@ -184,7 +184,7 @@ export async function getEngagementMetrics() {
 
 export async function getRecentSignups() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("user_profiles")
     .select("*", { count: "exact", head: true })
     .gte("created_at", sevenDaysAgo);
@@ -193,7 +193,7 @@ export async function getRecentSignups() {
 
 export async function getRecentVideos() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from("videos")
     .select("*", { count: "exact", head: true })
     .eq("status", "published")
@@ -204,7 +204,7 @@ export async function getRecentVideos() {
 // ---- Top hashtags ----
 
 export async function getTopHashtags() {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("hashtags")
     .select("name, usage_count")
     .order("usage_count", { ascending: false })
